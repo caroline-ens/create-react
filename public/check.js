@@ -73,8 +73,8 @@ function searchFile(filePath) {
   const hits = [];
   // const lines = text.split(/\r?\n/);
   const lines = text.match(PATTERN) || [];
-  const lines_sol = text.match(PATTERN_SOL) || [];
-  const lines_sol1 = text.match(PATTERN_SOL1) || [];
+  // const lines_sol = text.match(PATTERN_SOL) || [];
+  // const lines_sol1 = text.match(PATTERN_SOL1) || [];
 
 
   return lines;
