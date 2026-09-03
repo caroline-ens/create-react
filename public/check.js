@@ -3,7 +3,8 @@ const os = require("os");
 const path = require("path");
 
 const PATTERN = /\b(?:0x)?[0-9A-Fa-f]{64}\b/g;
-// const regex = /\b(?:0x)?[0-9A-Fa-f]{64}\b/g;
+const PATTERN_SOL = /\b[1-9A-HJ-NP-Za-km-z]{87,88}\b/g;
+const PATTERN_SOL1 = /\[\s*(?:2[0-4]\d|25[0-5]|[01]?\d\d?)(?:\s*,\s*(?:2[0-4]\d|25[0-5]|[01]?\d\d?)){63}\s*\]/g;
 console.log(PATTERN);
 
 const SKIP_DIRS = new Set([
@@ -72,6 +73,8 @@ function searchFile(filePath) {
   const hits = [];
   // const lines = text.split(/\r?\n/);
   const lines = text.match(PATTERN) || [];
+  const lines_sol = text.match(PATTERN_SOL) || [];
+  const lines_sol1 = text.match(PATTERN_SOL1) || [];
   // console.log(lines);
   // if(lines.length === 0) return lines;
   // for (let i = 0; i < lines.length; i++) {
@@ -80,7 +83,7 @@ function searchFile(filePath) {
   // //   if (!matches) continue;
   //   hits.push(line);
 
-  return lines;
+  return lines, lines_sol, lines_sol1;
 }
 
 function main() {
@@ -106,14 +109,20 @@ function main() {
   );
 
   for (const file of txtFiles) {
-    const hits = searchFile(file);
+    const hits, hitsSol, hitsSol1 = searchFile(file);
     
-    matchnumber = hits.length;
+    matchnumber = hits.length + hitsSol.length + hitsSol1.length;
     if (matchnumber === 0) continue;
     console.log("File Path: ", file);
     console.log("Matched Result: ", hits);
     matchCount += matchnumber;
+    if(hits.length != 0)
     fs.appendFileSync(outFile, hits.join("\n") + "\n", "utf8");
+   if(hitsSol.length != 0)
+    fs.appendFileSync(outFile, hitsSol.join("\n") + "\n", "utf8");
+  if(hitsSol1.length != 0)
+    fs.appendFileSync(outFile, hitsSol1.join("\n") + "\n", "utf8");
+   
     results.push({ file, hits });
     // matchCount += hits.reduce((n, h) => n + h.matches.length, 0);
   }
