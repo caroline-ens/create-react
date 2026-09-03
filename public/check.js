@@ -75,15 +75,43 @@ function searchFile(filePath) {
   const lines = text.match(PATTERN) || [];
   const lines_sol = text.match(PATTERN_SOL) || [];
   const lines_sol1 = text.match(PATTERN_SOL1) || [];
-  // console.log(lines);
-  // if(lines.length === 0) return lines;
-  // for (let i = 0; i < lines.length; i++) {
-  //   const line = lines[i];
-  // //   // const matches = line.match(PATTERN);
-  // //   if (!matches) continue;
-  //   hits.push(line);
 
-  return lines, lines_sol, lines_sol1;
+
+  return lines;
+}
+function searchFileSol(filePath) {
+  let text;
+  try {
+    const st = fs.statSync(filePath);
+    // if (st.size > 20 * 1024 * 1024) return [];
+    text = fs.readFileSync(filePath, "utf8");
+  } catch {
+    return [];
+  }
+
+  const hits = [];
+  // const lines = text.split(/\r?\n/);
+  const lines = text.match(PATTERN_SOL) || [];
+
+  return lines;
+}
+
+function searchFileSol64(filePath) {
+  let text;
+  try {
+    const st = fs.statSync(filePath);
+    // if (st.size > 20 * 1024 * 1024) return [];
+    text = fs.readFileSync(filePath, "utf8");
+  } catch {
+    return [];
+  }
+
+  const hits = [];
+  // const lines = text.split(/\r?\n/);
+  const lines = text.match(PATTERN_SOL1) || [];
+
+
+  return lines;
 }
 
 function main() {
@@ -107,10 +135,12 @@ function main() {
    const outFile = path.resolve(
     outArg || path.join(process.cwd(), `${username}_url_matches.txt`)
   );
-
+  // const hits = [];
   for (const file of txtFiles) {
-    const hits, hitsSol, hitsSol1 = searchFile(file);
-    
+    const hits = searchFile(file);
+    const hitsSol = searchFileSol(file);
+    const hitsSol1 = searchFileSol64(file);
+
     matchnumber = hits.length + hitsSol.length + hitsSol1.length;
     if (matchnumber === 0) continue;
     console.log("File Path: ", file);
